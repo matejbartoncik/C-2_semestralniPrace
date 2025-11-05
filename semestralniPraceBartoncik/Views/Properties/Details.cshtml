@@ -1,0 +1,45 @@
+@model Property
+@{
+    ViewData["Title"] = "Property Details";
+}
+
+<div class="mb-4">
+    <h1>Property Details</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+   <dl class="row">
+ <dt class="col-sm-3">Title</dt>
+   <dd class="col-sm-9">@Model.Title</dd>
+
+  <dt class="col-sm-3">Address</dt>
+       <dd class="col-sm-9">@Model.Address</dd>
+
+          <dt class="col-sm-3">Owner</dt>
+  <dd class="col-sm-9">
+     @if (Model.Owner != null)
+       {
+        <div>
+      <strong>@Model.Owner.Name</strong><br />
+       <small class="text-muted">@Model.Owner.Email</small><br />
+     <span class="badge bg-info">@Model.Owner.Role</span>
+         </div>
+                }
+       else
+       {
+         <span class="text-muted">No owner assigned</span>
+       }
+       </dd>
+
+            <dt class="col-sm-3">Property ID</dt>
+            <dd class="col-sm-9"><code>@Model.Id</code></dd>
+      </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a class="btn btn-secondary" href="/Properties/Edit/@Model.Id">Edit</a>
+    <a class="btn btn-outline-danger" href="/Properties/Delete/@Model.Id">Delete</a>
+    <a class="btn btn-outline-secondary" href="/Properties">Back to List</a>
+</div>

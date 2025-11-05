@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = "_LayoutAuth";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0 text-center">Přihlášení</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div class="alert alert-danger">
+                            @Html.ValidationSummary(false)
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label">E-mail</label>
+                        <input name="email" class="form-control" placeholder="admin@demo.cz" required autofocus />
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Přihlásit</button>
+                    </div>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <small class="text-muted">
+                        <strong>Demo účty:</strong><br />
+                        admin@demo.cz
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
