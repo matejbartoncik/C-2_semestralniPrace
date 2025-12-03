@@ -1,0 +1,94 @@
+@model Order
+@{
+    ViewData["Title"] = "Create Order";
+    var properties = ViewBag.Properties as IEnumerable<Property> ?? Enumerable.Empty<Property>();
+    var technicians = ViewBag.Technicians as IEnumerable<User> ?? Enumerable.Empty<User>();
+}
+
+<h1>Create New Order</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+       <div class="card mb-3">
+            <div class="card-header">
+     <h5 class="mb-0">Basic Information</h5>
+     </div>
+    <div class="card-body">
+       <div class="mb-3">
+       <label class="form-label" asp-for="PropertyId">Property *</label>
+    <select class="form-select" asp-for="PropertyId" required>
+           <option value="">-- Select Property --</option>
+      @foreach (var prop in properties)
+      {
+     <option value="@prop.Id">
+         @prop.Title - @prop.Address
+    @if (prop.Owner != null)
+    {
+   <text>(Owner: @prop.Owner.Name)</text>
+      }
+      </option>
+ }
+  </select>
+   <span asp-validation-for="PropertyId" class="text-danger"></span>
+ </div>
+
+    <div class="mb-3">
+<label class="form-label" asp-for="Description">Description *</label>
+     <textarea class="form-control" asp-for="Description" rows="4" required 
+    placeholder="Popište závadu nebo požadovanou opravu..."></textarea>
+  <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+       <div class="mb-3">
+   <label class="form-label" asp-for="Status">Status</label>
+  <select class="form-select" asp-for="Status" asp-items="Html.GetEnumSelectList<OrderStatus>()"></select>
+   <span asp-validation-for="Status" class="text-danger"></span>
+       </div>
+          </div>
+     </div>
+
+ <div class="card mb-3">
+    <div class="card-header">
+  <h5 class="mb-0">Assignment & Schedule</h5>
+    </div>
+         <div class="card-body">
+       <div class="mb-3">
+      <label class="form-label" asp-for="AssignedTechnicianId">Assigned Technician</label>
+       <select class="form-select" asp-for="AssignedTechnicianId">
+   <option value="">-- Unassigned --</option>
+   @foreach (var tech in technicians)
+        {
+<option value="@tech.Id">@tech.Name (@tech.Email)</option>
+         }
+       </select>
+        <span asp-validation-for="AssignedTechnicianId" class="text-danger"></span>
+         <small class="text-muted">Mùžete pøiøadit pozdìji</small>
+      </div>
+
+     <div class="row">
+     <div class="col-md-6 mb-3">
+     <label class="form-label" asp-for="ScheduledFromUtc">Scheduled From</label>
+         <input class="form-control" asp-for="ScheduledFromUtc" type="datetime-local" />
+     <span asp-validation-for="ScheduledFromUtc" class="text-danger"></span>
+              </div>
+     <div class="col-md-6 mb-3">
+        <label class="form-label" asp-for="ScheduledToUtc">Scheduled To</label>
+       <input class="form-control" asp-for="ScheduledToUtc" type="datetime-local" />
+<span asp-validation-for="ScheduledToUtc" class="text-danger"></span>
+     </div>
+     </div>
+     </div>
+        </div>
+
+        <div class="mt-4">
+    <button type="submit" class="btn btn-primary">Create Order</button>
+   <a class="btn btn-secondary" href="/Orders">Cancel</a>
+   </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
