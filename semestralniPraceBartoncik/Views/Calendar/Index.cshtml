@@ -5,9 +5,9 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-	<h1>?? Kalendáø technikù</h1>
+	<h1>Technician Calendar</h1>
 	<div>
-		<a href="/Orders/Create" class="btn btn-primary">Nová zakázka</a>
+		<a href="/Orders/Create" class="btn btn-primary">New Order</a>
 	</div>
 </div>
 
@@ -15,9 +15,9 @@
 	<div class="card-body">
 		<div class="row align-items-end">
 			<div class="col-md-4">
-				<label class="form-label">Filtrovat podle technika</label>
+				<label class="form-label">Filter by Technician</label>
 				<select id="technicianFilter" class="form-select">
-					<option value="">-- Všichni technici --</option>
+					<option value="">-- All Technicians --</option>
 					@foreach (var tech in technicians)
 					{
 						<option value="@tech.Id" selected="@(tech.Id == selectedTechnicianId)">
@@ -28,7 +28,7 @@
 			</div>
 			<div class="col-md-8">
 				<div class="alert alert-info mb-0">
-					<strong>Legenda:</strong> Každá barva pøedstavuje jiného technika. Kliknìte na událost pro zobrazení detailu.
+					<strong>Legend:</strong> Each color represents a different technician. Click on an event to view details.
 				</div>
 			</div>
 		</div>
@@ -41,20 +41,19 @@
 	</div>
 </div>
 
-<!-- Modal pro detail události -->
 <div class="modal fade" id="eventModal" tabindex="-1">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Detail zakázky</h5>
+				<h5 class="modal-title">Order Details</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 			</div>
 			<div class="modal-body" id="eventModalBody">
 				<!-- Content will be populated by JavaScript -->
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zavøít</button>
-				<a id="viewOrderBtn" href="#" class="btn btn-primary">Zobrazit zakázku</a>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<a id="viewOrderBtn" href="#" class="btn btn-primary">View Order</a>
 			</div>
 		</div>
 	</div>
@@ -64,110 +63,109 @@
 	<!-- FullCalendar CSS & JS -->
 	<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" />
 	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/cs.global.min.js"></script>
 
 	<script>
-				document.addEventListener('DOMContentLoaded', function() {
-		  var calendarEl = document.getElementById('calendar');
-				var technicianFilter = document.getElementById('technicianFilter');
-			  var eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+		document.addEventListener('DOMContentLoaded', function() {
+			var calendarEl = document.getElementById('calendar');
+			var technicianFilter = document.getElementById('technicianFilter');
+			var eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
 
-			  var calendar = new FullCalendar.Calendar(calendarEl, {
-			 initialView: 'dayGridMonth',
-		   locale: 'cs',
-			   headerToolbar: {
-		   left: 'prev,next today',
-			   center: 'title',
-					   right: 'dayGridMonth,timeGridWeek,timeGridDay'
-			 },
-			 buttonText: {
-		   today: 'Dnes',
-		   month: 'Mìsíc',
-		week: 'Týden',
-					day: 'Den'
-			 },
-				   slotMinTime: '07:00:00',
-		 slotMaxTime: '19:00:00',
-				   height: 'auto',
-			 events: function(info, successCallback, failureCallback) {
-				  var technicianId = technicianFilter.value;
-				  var url = '/Calendar/GetEvents?technicianId=' + technicianId +
-						  '&start=' + info.startStr +
-				'&end=' + info.endStr;
-
-			   fetch(url)
-			 .then(response => response.json())
-					.then(data => successCallback(data))
-		   .catch(error => {
-			console.error('Error fetching events:', error);
-						 failureCallback(error);
-				  });
-				  },
-			  eventClick: function(info) {
-		  var event = info.event;
-				 var props = event.extendedProps;
-
-			var modalBody = document.getElementById('eventModalBody');
-			   modalBody.innerHTML = `
-		  <dl class="row">
-				  <dt class="col-sm-4">Nemovitost:</dt>
-				 <dd class="col-sm-8"><strong>${props.propertyTitle || 'N/A'}</strong><br/>
-					 <small class="text-muted">${props.propertyAddress || ''}</small>
-			  </dd>
-
-				 <dt class="col-sm-4">Technik:</dt>
-			  <dd class="col-sm-8">${props.technicianName || 'Nepøiøazeno'}</dd>
-
-		   <dt class="col-sm-4">Status:</dt>
-			 <dd class="col-sm-8">
-			  <span class="badge ${getStatusBadgeClass(props.status)}">${props.status}</span>
-		  </dd>
-
-			 <dt class="col-sm-4">Od:</dt>
-				<dd class="col-sm-8">${formatDate(event.start)}</dd>
-
-				  <dt class="col-sm-4">Do:</dt>
-			<dd class="col-sm-8">${formatDate(event.end)}</dd>
-
-				   <dt class="col-sm-4">Popis:</dt>
-			   <dd class="col-sm-8">${info.event.extendedProps.description || 'Bez popisu'}</dd>
-		   </dl>
-			 `;
-
-					  document.getElementById('viewOrderBtn').href = '/Orders/Details/' + props.orderId;
-				   eventModal.show();
-		   },
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+				initialView: 'dayGridMonth',
+				locale: 'en',
+				headerToolbar: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'dayGridMonth,timeGridWeek,timeGridDay'
+				},
+				buttonText: {
+					today: 'Today',
+					month: 'Month',
+					week: 'Week',
+					day: 'Day'
+				},
+				slotMinTime: '07:00:00',
+				slotMaxTime: '19:00:00',
+				height: 'auto',
+				events: function(info, successCallback, failureCallback) {
+					var technicianId = technicianFilter.value;
+					var url = '/Calendar/GetEvents?technicianId=' + technicianId + 
+							'&start=' + info.startStr + 
+							'&end=' + info.endStr;
+			
+					fetch(url)
+						.then(response => response.json())
+						.then(data => successCallback(data))
+						.catch(error => {
+							console.error('Error fetching events:', error);
+							failureCallback(error);
+						});
+				},
+				eventClick: function(info) {
+					var event = info.event;
+					var props = event.extendedProps;
+					
+					var modalBody = document.getElementById('eventModalBody');
+					modalBody.innerHTML = `
+						<dl class="row">
+							<dt class="col-sm-4">Property:</dt>
+							<dd class="col-sm-8"><strong>${props.propertyTitle || 'N/A'}</strong><br/>
+								<small class="text-muted">${props.propertyAddress || ''}</small>
+							</dd>
+							
+							<dt class="col-sm-4">Technician:</dt>
+							<dd class="col-sm-8">${props.technicianName || 'Unassigned'}</dd>
+							
+							<dt class="col-sm-4">Status:</dt>
+							<dd class="col-sm-8">
+								<span class="badge ${getStatusBadgeClass(props.status)}">${props.status}</span>
+							</dd>
+							
+							<dt class="col-sm-4">From:</dt>
+							<dd class="col-sm-8">${formatDate(event.start)}</dd>
+							
+							<dt class="col-sm-4">To:</dt>
+							<dd class="col-sm-8">${formatDate(event.end)}</dd>
+							
+							<dt class="col-sm-4">Description:</dt>
+							<dd class="col-sm-8">${info.event.extendedProps.description || 'No description'}</dd>
+						</dl>
+					`;
+					
+					document.getElementById('viewOrderBtn').href = '/Orders/Details/' + props.orderId;
+					eventModal.show();
+				},
 				eventDidMount: function(info) {
-				 info.el.title = info.event.extendedProps.description || '';
-			  }
-					});
+					info.el.title = info.event.extendedProps.description || '';
+				}
+			});
 
-					calendar.render();
+			calendar.render();
 
-					// Refresh calendar when technician filter changes
-		 technicianFilter.addEventListener('change', function() {
-			  calendar.refetchEvents();
-			 });
+			// Refresh calendar when technician filter changes
+			technicianFilter.addEventListener('change', function() {
+				calendar.refetchEvents();
+			});
 
-					function formatDate(date) {
+			function formatDate(date) {
 				if (!date) return 'N/A';
-			 return new Date(date).toLocaleString('cs-CZ', {
-		 day: '2-digit',
-		   month: '2-digit',
-			year: 'numeric',
-			hour: '2-digit',
+				return new Date(date).toLocaleString('en-US', {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric',
+					hour: '2-digit',
 					minute: '2-digit'
-			   });
-		}
+				});
+			}
 
-			 function getStatusBadgeClass(status) {
-					switch(status) {
-				case 'New': return 'bg-info';
-				case 'InProgress': return 'bg-warning text-dark';
-			   case 'Done': return 'bg-success';
-			default: return 'bg-secondary';
-			  }
-			   }
-			  });
+			function getStatusBadgeClass(status) {
+				switch(status) {
+					case 'New': return 'bg-info';
+					case 'InProgress': return 'bg-warning text-dark';
+					case 'Done': return 'bg-success';
+					default: return 'bg-secondary';
+				}
+			}
+		});
 	</script>
 }

@@ -5,33 +5,41 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>Properties</h1>
+    <div>
+   <a class="btn btn-success me-2" href="/Properties/Export">
+   Export
+  </a>
+      <a class="btn btn-info me-2" href="/Properties/Import">
+    Import
+  </a>
   <a class="btn btn-primary" href="/Properties/Create">
-     Create New Property
+Create New Property
     </a>
+    </div>
 </div>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">
-        <strong>No properties found.</strong> Click "Create New Property" to add your first property.
+  <div class="alert alert-info">
+  <strong>No properties found.</strong> Click "Create New Property" to add your first property.
     </div>
 }
 else
 {
-    <div class="table-responsive">
+<div class="table-responsive">
    <table class="table table-striped table-hover">
     <thead class="table-dark">
      <tr>
-                    <th>Title</th>
+<th>Title</th>
       <th>Address</th>
     <th>Owner</th>
-       <th class="text-end">Actions</th>
-                </tr>
-            </thead>
+    <th class="text-end">Actions</th>
+       </tr>
+     </thead>
     <tbody>
-           @foreach (var property in Model)
+    @foreach (var property in Model)
      {
-               <tr>
+         <tr>
 <td>
     <strong>@property.Title</strong>
          </td>
@@ -41,29 +49,29 @@ else
      {
       <span>@property.Owner.Name</span>
      <br />
-              <small class="text-muted">@property.Owner.Email</small>
-          }
+           <small class="text-muted">@property.Owner.Email</small>
+     }
   else
-               {
+             {
    <span class="text-muted">No owner assigned</span>
-            }
+      }
    </td>
-            <td class="text-end">
-         <div class="btn-group" role="group">
+      <td class="text-end">
+  <div class="btn-group" role="group">
     <a class="btn btn-sm btn-outline-primary" href="/Properties/Details/@property.Id" title="View Details">
     Details
-             </a>
+     </a>
          <a class="btn btn-sm btn-outline-secondary" href="/Properties/Edit/@property.Id" title="Edit">
     Edit
    </a>
         <a class="btn btn-sm btn-outline-danger" href="/Properties/Delete/@property.Id" title="Delete">
-         Delete
-          </a>
-          </div>
+      Delete
+    </a>
+    </div>
     </td>
      </tr>
  }
-            </tbody>
+    </tbody>
 </table>
  </div>
 

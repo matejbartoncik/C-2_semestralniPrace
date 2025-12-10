@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "Import Orders";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="mb-4">Import Orders</h1>
+
+   @if (TempData["Success"] != null)
+  {
+  <div class="alert alert-success alert-dismissible fade show">
+    <strong>Úspìch!</strong> @TempData["Success"]
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+     </div>
+ }
+
+    @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+       <strong>Chyba!</strong> @TempData["Error"]
+       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+     </div>
+        }
+
+   <div class="card">
+<div class="card-body">
+    <h3>?? Import CSV souboru</h3>
+       <p>Nahrajte CSV soubor s následující strukturou:</p>
+    
+        <div class="alert alert-secondary">
+        <code>ID,Created,PropertyTitle,PropertyAddress,Description,Status,TechnicianName,TechnicianEmail,ScheduledFrom,ScheduledTo</code>
+      </div>
+
+       <form method="post" asp-action="ImportCsv" enctype="multipart/form-data">
+      <div class="mb-3">
+    <label class="form-label">Vyberte CSV soubor:</label>
+     <input type="file" name="file" class="form-control" accept=".csv" required />
+   </div>
+   
+       <button type="submit" class="btn btn-primary btn-lg">
+?? Importovat zakázky
+  </button>
+ </form>
+
+    <div class="alert alert-warning mt-4">
+      <strong>Upozornìní:</strong>
+       <ul class="mb-0">
+      <li>Soubor musí být ve formátu CSV s oddìlovaèem èárkou</li>
+      <li>První øádek obsahuje názvy sloupcù</li>
+         <li>PropertyTitle a TechnicianName musí existovat v databázi</li>
+    <li>Nové záznamy budou vytvoøeny s novými ID</li>
+   </ul>
+     </div>
+        </div>
+        </div>
+
+        <div class="mt-3">
+  <a href="/Orders" class="btn btn-secondary">Zpìt na zakázky</a>
+        </div>
+    </div>
+</div>
