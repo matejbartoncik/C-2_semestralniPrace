@@ -128,20 +128,7 @@ public class OrdersController : Controller
                .FirstOrDefaultAsync(o => o.Id == model.Id);
 
             var syncSuccess = await _calendarService.SyncOrderToCalendarAsync(orderToSync);
-            if (syncSuccess)
-            {
-                TempData["Success"] = "Zakázka vytvoøena a synchronizována s Google Calendar!";
-            }
-            else
-            {
-                TempData["Warning"] = "Zakázka vytvoøena, ale synchronizace s Google Calendar se nezdaøila.";
-            }
         }
-        else
-        {
-            TempData["Success"] = "Zakázka vytvoøena!";
-        }
-
         return RedirectToAction(nameof(Index));
     }
 
@@ -206,7 +193,6 @@ public class OrdersController : Controller
         _db.Remove(order);
         await _db.SaveChangesAsync();
 
-        TempData["Success"] = "Zakázka smazána (vèetnì Google Calendar)";
         return RedirectToAction(nameof(Index));
     }
 
@@ -228,20 +214,11 @@ public class OrdersController : Controller
 
         if (!order.ScheduledFromUtc.HasValue || !order.ScheduledToUtc.HasValue)
         {
-            TempData["Error"] = "Zakázka nemá nastaveno plánování.";
             return RedirectToAction(nameof(Details), new { id });
         }
 
         var success = await _calendarService.SyncOrderToCalendarAsync(order);
 
-        if (success)
-        {
-            TempData["Success"] = "Zakázka byla synchronizována s Google Calendar!";
-        }
-        else
-        {
-            TempData["Error"] = "Chyba pøi synchronizaci. Zkontrolujte logs.";
-        }
 
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -251,14 +228,15 @@ public class OrdersController : Controller
     public async Task<IActionResult> Export()
     {
         var orders = await _db.Orders
-       .Include(o => o.Property)
+            .Include(o => o.Property)
             .ThenInclude(p => p!.Owner)
-            .Include(o => o.AssignedTechnician)
-             .OrderByDescending(o => o.CreatedAtUtc)
+       .Include(o => o.AssignedTechnician)
+      .OrderByDescending(o => o.CreatedAtUtc)
          .ToListAsync();
 
         var bytes = ImportExportHelper.ExportOrdersToCsv(orders);
-        return File(bytes, "text/csv; charset=utf-8", $"orders_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
+
+        return File(bytes, "text/csv", $"orders_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
     }
 
     // ===== IMPORT =====

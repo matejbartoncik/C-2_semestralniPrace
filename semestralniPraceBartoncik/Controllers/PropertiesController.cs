@@ -45,9 +45,9 @@ public class PropertiesController : Controller
             .Where(u => u.Role == UserRole.Owner)
             .OrderBy(u => u.Name)
             .ToListAsync();
-        
+
         ViewBag.GoogleMapsApiKey = _configuration["GoogleMaps:ApiKey"];
-        
+
         return View(new Property());
     }
 
@@ -78,9 +78,9 @@ public class PropertiesController : Controller
             .Where(u => u.Role == UserRole.Owner)
             .OrderBy(u => u.Name)
             .ToListAsync();
-        
+
         ViewBag.GoogleMapsApiKey = _configuration["GoogleMaps:ApiKey"];
-        
+
         return View(property);
     }
 
@@ -107,13 +107,22 @@ public class PropertiesController : Controller
         var property = await _db.Properties.FindAsync(id);
         if (property == null) return NotFound();
 
+        var relatedOrders = await _db.Orders
+            .Where(o => o.PropertyId == id)
+            .ToListAsync();
+
+        if (relatedOrders.Any())
+        {
+            _db.Orders.RemoveRange(relatedOrders);
+        }
+
         _db.Remove(property);
         await _db.SaveChangesAsync();
+
+
         return RedirectToAction(nameof(Index));
     }
 
-    // ===== EXPORT =====
-    
     [HttpGet]
     public async Task<IActionResult> Export()
     {
@@ -126,8 +135,7 @@ public class PropertiesController : Controller
         return File(bytes, "text/csv; charset=utf-8", $"properties_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
     }
 
-    // ===== IMPORT =====
-    
+
     public IActionResult Import() => View();
 
     [HttpPost]
@@ -149,15 +157,13 @@ public class PropertiesController : Controller
                 .ToDictionaryAsync(u => u.Name, u => u.Id);
 
             var properties = ImportExportHelper.ImportPropertiesFromCsv(csvContent, ownerLookup);
-            
+
             _db.Properties.AddRange(properties);
             await _db.SaveChangesAsync();
 
-            TempData["Success"] = $"Úspìšnì importováno {properties.Count} nemovitostí.";
         }
         catch (Exception ex)
         {
-            TempData["Error"] = $"Chyba pøi importu: {ex.Message}";
         }
 
         return RedirectToAction(nameof(Index));

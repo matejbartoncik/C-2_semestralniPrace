@@ -1,3 +1,5 @@
+
+
 using System.Text;
 using semestralniPraceBartoncik.Models;
 
@@ -26,7 +28,7 @@ o.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm")
             ));
         }
 
-        return GetBytes(sb.ToString());
+        return GetBytesForExcel(sb.ToString());
     }
 
     public static byte[] ExportPropertiesToCsv(IEnumerable<Property> properties)
@@ -39,7 +41,7 @@ o.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm")
             sb.AppendLine(BuildCsvLine(p.Id, p.Title, p.Address, p.Owner?.Name, p.Owner?.Email));
         }
 
-        return GetBytes(sb.ToString());
+        return GetBytesForExcel(sb.ToString());
     }
 
     public static byte[] ExportUsersToCsv(IEnumerable<User> users)
@@ -52,7 +54,7 @@ o.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm")
             sb.AppendLine(BuildCsvLine(u.Id, u.Name, u.Email, u.Role.ToString()));
         }
 
-        return GetBytes(sb.ToString());
+        return GetBytesForExcel(sb.ToString());
     }
 
     public static List<Order> ImportOrdersFromCsv(string content, Dictionary<string, string> propertyLookup, Dictionary<string, string> technicianLookup)
@@ -139,16 +141,17 @@ o.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm")
         return string.Join(';', values.Select(v => $"\"{v ?? ""}\""));
     }
 
-    private static byte[] GetBytes(string text)
+    private static byte[] GetBytesForExcel(string text)
     {
-        return new UTF8Encoding(true).GetBytes(text);
+        var encoding = new UTF8Encoding(true); 
+        return encoding.GetBytes(text);
     }
 
     private static IEnumerable<string[]> ReadCsvLines(string content)
     {
         return content.Split('\n', StringSplitOptions.RemoveEmptyEntries)
-                .Skip(1)
-            .Select(line => SplitCsvLine(line));
+     .Skip(1)
+          .Select(line => SplitCsvLine(line));
     }
 
     private static DateTime? TryParseDate(string value)
