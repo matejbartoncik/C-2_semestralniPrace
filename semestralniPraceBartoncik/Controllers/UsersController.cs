@@ -52,20 +52,20 @@ public class UsersController(ApplicationDbContext db) : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    public IActionResult Export() => View();
-
-    [HttpPost]
-    public async Task<IActionResult> ExportCsv()
+    // ===== EXPORT - pøímo stáhne CSV =====
+    [HttpGet]
+    public async Task<IActionResult> Export()
     {
         var users = await db.Users.OrderBy(u => u.Name).ToListAsync();
         var bytes = ImportExportHelper.ExportUsersToCsv(users);
-        return File(bytes, "text/csv", $"users_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
+        return File(bytes, "text/csv; charset=utf-8", $"users_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
     }
 
+    // ===== IMPORT =====
     public IActionResult Import() => View();
 
     [HttpPost]
-    public async Task<IActionResult> ImportCsv(IFormFile file)
+    public async Task<IActionResult> Import(IFormFile file)
     {
         if (file == null || file.Length == 0)
         {

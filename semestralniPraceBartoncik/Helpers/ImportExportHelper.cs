@@ -1,5 +1,3 @@
-
-
 using System.Text;
 using semestralniPraceBartoncik.Models;
 
@@ -15,15 +13,15 @@ public static class ImportExportHelper
         foreach (var o in orders)
         {
             sb.AppendLine(BuildCsvLine(
-    o.Id,
-       o.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm"),
-                o.Property?.Title,
-           o.Property?.Address,
+         o.Id,
+         o.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm"),
+         o.Property?.Title,
+         o.Property?.Address,
          o.Description,
-           o.Status.ToString(),
-                o.AssignedTechnician?.Name,
-       o.AssignedTechnician?.Email,
-        o.ScheduledFromUtc?.ToString("yyyy-MM-dd HH:mm"),
+         o.Status.ToString(),
+         o.AssignedTechnician?.Name,
+         o.AssignedTechnician?.Email,
+         o.ScheduledFromUtc?.ToString("yyyy-MM-dd HH:mm"),
 o.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm")
             ));
         }
@@ -138,12 +136,12 @@ o.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm")
 
     private static string BuildCsvLine(params string?[] values)
     {
-        return string.Join(';', values.Select(v => $"\"{v ?? ""}\""));
+        return string.Join(';', values.Select(v => v ?? ""));
     }
 
     private static byte[] GetBytesForExcel(string text)
     {
-        var encoding = new UTF8Encoding(true); 
+        var encoding = new UTF8Encoding(true);
         return encoding.GetBytes(text);
     }
 
@@ -161,24 +159,6 @@ o.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm")
 
     private static string[] SplitCsvLine(string line)
     {
-        var items = new List<string>();
-        var current = new StringBuilder();
-        bool inQuotes = false;
-
-        foreach (char ch in line)
-        {
-            if (ch == '"')
-                inQuotes = !inQuotes;
-            else if (ch == ';' && !inQuotes)
-            {
-                items.Add(current.ToString());
-                current.Clear();
-            }
-            else
-                current.Append(ch);
-        }
-
-        items.Add(current.ToString());
-        return items.ToArray();
+        return line.Split(';').Select(s => s.Trim()).ToArray();
     }
 }
