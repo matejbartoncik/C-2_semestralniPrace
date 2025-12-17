@@ -37,7 +37,7 @@
 
 			<div class="mt-4">
 				<button type="submit" class="btn btn-primary">Vytvořit</button>
-				<a class="btn btn-secondary" href="/Properties">Zrušit</a>
+				<a asp-controller="Properties" asp-action="Index" class="btn btn-secondary">Zpět</a>
 			</div>
 		</form>
 	</div>
@@ -101,10 +101,5 @@
 				 }
 		</script>
 	}
-	else
-	{
-		<script>
-			console.warn("⚠️ Google Maps API klíč není nastaven. Autocomplete nebude funkční.");
-		</script>
-	}
+	
 }

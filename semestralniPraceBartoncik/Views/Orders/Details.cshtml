@@ -147,7 +147,7 @@
 		</button>
 	}
 	<a class="btn btn-outline-danger" href="/Orders/Delete/@Model.Id">Smazat zakázku</a>
-	<a class="btn btn-outline-secondary" href="/Orders">Zpìt na seznam</a>
+	<a asp-controller="Orders" asp-action="Index" class="btn btn-secondary">Zpìt na zakázky</a>
 </div>
 
 @section Scripts {
