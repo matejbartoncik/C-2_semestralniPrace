@@ -1,130 +1,130 @@
 @model DashboardStats
 @{
-  ViewData["Title"] = "Dashboard";
+	ViewData["Title"] = "Pøehled";
 }
 
-<h1 class="mb-4">Dashboard</h1>
+<h1 class="mb-4">Pøehled</h1>
 
 <div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary">
-        <div class="card-body">
-       <h5 class="card-title">Celkem zakázek</h5>
-  <h2 class="display-4">@Model.TotalOrders</h2>
-  </div>
-        </div>
-    </div>
-    
-  <div class="col-md-3">
-        <div class="card text-white bg-info">
-  <div class="card-body">
-   <h5 class="card-title">Nové zakázky</h5>
-        <h2 class="display-4">@Model.NewOrders</h2>
- </div>
-        </div>
-    </div>
-    
-  <div class="col-md-3">
-    <div class="card text-white bg-warning">
-<div class="card-body">
-         <h5 class="card-title">Probíhající</h5>
-      <h2 class="display-4">@Model.InProgressOrders</h2>
-       </div>
- </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-     <div class="card-body">
-     <h5 class="card-title">Dokonèené</h5>
-   <h2 class="display-4">@Model.CompletedOrders</h2>
-            </div>
- </div>
-    </div>
+	<div class="col-md-3">
+		<div class="card text-white bg-primary">
+			<div class="card-body">
+				<h5 class="card-title">Celkem zakázek</h5>
+				<h2 class="display-4">@Model.TotalOrders</h2>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="card text-white bg-info">
+			<div class="card-body">
+				<h5 class="card-title">Nové zakázky</h5>
+				<h2 class="display-4">@Model.NewOrders</h2>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="card text-white bg-warning">
+			<div class="card-body">
+				<h5 class="card-title">Probíhající</h5>
+				<h2 class="display-4">@Model.InProgressOrders</h2>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-3">
+		<div class="card text-white bg-success">
+			<div class="card-body">
+				<h5 class="card-title">Dokonèené</h5>
+				<h2 class="display-4">@Model.CompletedOrders</h2>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="row mb-4">
-    <div class="col-md-6">
-   <div class="card">
-    <div class="card-header">
-   <h5 class="mb-0">Statistiky</h5>
-        </div>
-    <div class="card-body">
-   <p><strong>Celkem nemovitostí:</strong> @Model.TotalProperties</p>
-         <p><strong>Celkem technikù:</strong> @Model.TotalTechnicians</p>
-     <p><strong>Prùmìrná doba dokonèení:</strong> 2.5 dní</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-  <div class="card">
-  <div class="card-header">
-         <h5 class="mb-0">Rychlé akce</h5>
-    </div>
-     <div class="card-body">
-     <a href="/Orders/Create" class="btn btn-primary mb-2 w-100">Nová zakázka</a>
-     <a href="/Calendar" class="btn btn-success mb-2 w-100">?? Zobrazit kalendáø</a>
-   <a href="/Properties/Create" class="btn btn-secondary mb-2 w-100">Nová nemovitost</a>
-    <a href="/Users/Create" class="btn btn-info w-100">Nový uživatel</a>
- </div>
-        </div>
-    </div>
+	<div class="col-md-6">
+		<div class="card">
+			<div class="card-header">
+				<h5 class="mb-0">Statistiky</h5>
+			</div>
+			<div class="card-body">
+				<p><strong>Celkem nemovitostí:</strong> @Model.TotalProperties</p>
+				<p><strong>Celkem technikù:</strong> @Model.TotalTechnicians</p>
+				<p><strong>Prùmìrná doba dokonèení:</strong> 2,5 dní</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<div class="card">
+			<div class="card-header">
+				<h5 class="mb-0">Rychlé akce</h5>
+			</div>
+			<div class="card-body">
+				<a href="/Orders/Create" class="btn btn-primary mb-2 w-100">Nová zakázka</a>
+				<a href="/Calendar" class="btn btn-success mb-2 w-100">Zobrazit kalendáø</a>
+				<a href="/Properties/Create" class="btn btn-secondary mb-2 w-100">Nová nemovitost</a>
+				<a href="/Users/Create" class="btn btn-info w-100">Nový uživatel</a>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="card">
-    <div class="card-header">
-  <h5 class="mb-0">Nedávné zakázky</h5>
-    </div>
-  <div class="card-body">
-@if (!Model.RecentOrders.Any())
-   {
-   <p class="text-muted">Zatím žádné zakázky.</p>
-        }
-        else
-  {
-      <div class="table-responsive">
-      <table class="table table-hover">
-       <thead>
-         <tr>
-         <th>Vytvoøeno</th>
-   <th>Nemovitost</th>
-      <th>Popis</th>
-   <th>Status</th>
-     <th>Technik</th>
-       <th></th>
-  </tr>
-       </thead>
-      <tbody>
-     @foreach (var order in Model.RecentOrders)
-      {
-         <tr>
-      <td><small>@order.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy")</small></td>
-       <td>@order.Property?.Title</td>
-      <td>@(order.Description.Length > 50 ? order.Description.Substring(0, 50) + "..." : order.Description)</td>
-   <td>
-          @if (order.Status == OrderStatus.New)
-  {
-       <span class="badge bg-info">@order.Status</span>
-       }
-  else if (order.Status == OrderStatus.InProgress)
-    {
-  <span class="badge bg-warning text-dark">@order.Status</span>
-      }
-  else
-       {
-        <span class="badge bg-success">@order.Status</span>
-     }
-</td>
-            <td>@(order.AssignedTechnician?.Name ?? "Nepøiøazeno")</td>
-  <td>
-      <a href="/Orders/Details/@order.Id" class="btn btn-sm btn-outline-primary">Detail</a>
-  </td>
-     </tr>
-         }
-       </tbody>
-  </table>
-         </div>
-    }
-    </div>
+	<div class="card-header">
+		<h5 class="mb-0">Nedávné zakázky</h5>
+	</div>
+	<div class="card-body">
+		@if (!Model.RecentOrders.Any())
+		{
+			<p class="text-muted">Zatím žádné zakázky.</p>
+		}
+		else
+		{
+			<div class="table-responsive">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Vytvoøeno</th>
+							<th>Nemovitost</th>
+							<th>Popis</th>
+							<th>Status</th>
+							<th>Technik</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var order in Model.RecentOrders)
+						{
+							<tr>
+								<td><small>@order.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy")</small></td>
+								<td>@order.Property?.Title</td>
+								<td>@(order.Description.Length > 50 ? order.Description.Substring(0, 50) + "..." : order.Description)</td>
+								<td>
+									@if (order.Status == OrderStatus.New)
+									{
+										<span class="badge bg-info">Nová</span>
+									}
+									else if (order.Status == OrderStatus.InProgress)
+									{
+										<span class="badge bg-warning text-dark">Probíhá</span>
+									}
+									else
+									{
+										<span class="badge bg-success">Dokonèena</span>
+									}
+								</td>
+								<td>@(order.AssignedTechnician?.Name ?? "Nepøiøazeno")</td>
+								<td>
+									<a href="/Orders/Details/@order.Id" class="btn btn-sm btn-outline-primary">Detail</a>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</div>
 </div>

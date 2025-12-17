@@ -1,13 +1,13 @@
 @{
-	ViewData["Title"] = "Technician Calendar";
+	ViewData["Title"] = "Kalendáø technikù";
 	var technicians = ViewBag.Technicians as IEnumerable<User> ?? Enumerable.Empty<User>();
 	var selectedTechnicianId = ViewBag.SelectedTechnicianId as string;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-	<h1>Technician Calendar</h1>
+	<h1>Kalendáø technikù</h1>
 	<div>
-		<a href="/Orders/Create" class="btn btn-primary">New Order</a>
+		<a href="/Orders/Create" class="btn btn-primary">Nová zakázka</a>
 	</div>
 </div>
 
@@ -15,9 +15,9 @@
 	<div class="card-body">
 		<div class="row align-items-end">
 			<div class="col-md-4">
-				<label class="form-label">Filter by Technician</label>
+				<label class="form-label">Filtrovat podle technika</label>
 				<select id="technicianFilter" class="form-select">
-					<option value="">-- All Technicians --</option>
+					<option value="">-- Všichni technici --</option>
 					@foreach (var tech in technicians)
 					{
 						<option value="@tech.Id" selected="@(tech.Id == selectedTechnicianId)">
@@ -28,7 +28,7 @@
 			</div>
 			<div class="col-md-8">
 				<div class="alert alert-info mb-0">
-					<strong>Legend:</strong> Each color represents a different technician. Click on an event to view details.
+					<strong>Legenda:</strong> Každá barva pøedstavuje jiného technika. Kliknutím na událost zobrazíte detail.
 				</div>
 			</div>
 		</div>
@@ -45,15 +45,15 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Order Details</h5>
+				<h5 class="modal-title">Detail zakázky</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 			</div>
 			<div class="modal-body" id="eventModalBody">
-				<!-- Content will be populated by JavaScript -->
+				<!--obsah se doplni js-->
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<a id="viewOrderBtn" href="#" class="btn btn-primary">View Order</a>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zavøít</button>
+				<a id="viewOrderBtn" href="#" class="btn btn-primary">Zobrazit zakázku</a>
 			</div>
 		</div>
 	</div>
@@ -72,27 +72,27 @@
 
 			var calendar = new FullCalendar.Calendar(calendarEl, {
 				initialView: 'dayGridMonth',
-				locale: 'en',
+				locale: 'cs',
 				headerToolbar: {
 					left: 'prev,next today',
 					center: 'title',
 					right: 'dayGridMonth,timeGridWeek,timeGridDay'
 				},
 				buttonText: {
-					today: 'Today',
-					month: 'Month',
-					week: 'Week',
-					day: 'Day'
+					today: 'Dnes',
+					month: 'Mìsíc',
+					week: 'Týden',
+					day: 'Den'
 				},
 				slotMinTime: '07:00:00',
 				slotMaxTime: '19:00:00',
 				height: 'auto',
 				events: function(info, successCallback, failureCallback) {
 					var technicianId = technicianFilter.value;
-					var url = '/Calendar/GetEvents?technicianId=' + technicianId + 
-							'&start=' + info.startStr + 
+					var url = '/Calendar/GetEvents?technicianId=' + technicianId +
+							'&start=' + info.startStr +
 							'&end=' + info.endStr;
-			
+
 					fetch(url)
 						.then(response => response.json())
 						.then(data => successCallback(data))
@@ -104,34 +104,34 @@
 				eventClick: function(info) {
 					var event = info.event;
 					var props = event.extendedProps;
-					
+
 					var modalBody = document.getElementById('eventModalBody');
 					modalBody.innerHTML = `
 						<dl class="row">
-							<dt class="col-sm-4">Property:</dt>
+							<dt class="col-sm-4">Nemovitost:</dt>
 							<dd class="col-sm-8"><strong>${props.propertyTitle || 'N/A'}</strong><br/>
 								<small class="text-muted">${props.propertyAddress || ''}</small>
 							</dd>
-							
-							<dt class="col-sm-4">Technician:</dt>
-							<dd class="col-sm-8">${props.technicianName || 'Unassigned'}</dd>
-							
+
+							<dt class="col-sm-4">Technik:</dt>
+							<dd class="col-sm-8">${props.technicianName || 'Nepøiøazeno'}</dd>
+
 							<dt class="col-sm-4">Status:</dt>
 							<dd class="col-sm-8">
-								<span class="badge ${getStatusBadgeClass(props.status)}">${props.status}</span>
+								<span class="badge ${getStatusBadgeClass(props.status)}">${formatStatus(props.status)}</span>
 							</dd>
-							
-							<dt class="col-sm-4">From:</dt>
+
+							<dt class="col-sm-4">Od:</dt>
 							<dd class="col-sm-8">${formatDate(event.start)}</dd>
-							
-							<dt class="col-sm-4">To:</dt>
+
+							<dt class="col-sm-4">Do:</dt>
 							<dd class="col-sm-8">${formatDate(event.end)}</dd>
-							
-							<dt class="col-sm-4">Description:</dt>
-							<dd class="col-sm-8">${info.event.extendedProps.description || 'No description'}</dd>
+
+							<dt class="col-sm-4">Popis:</dt>
+							<dd class="col-sm-8">${info.event.extendedProps.description || 'Bez popisu'}</dd>
 						</dl>
 					`;
-					
+
 					document.getElementById('viewOrderBtn').href = '/Orders/Details/' + props.orderId;
 					eventModal.show();
 				},
@@ -142,14 +142,13 @@
 
 			calendar.render();
 
-			// Refresh calendar when technician filter changes
 			technicianFilter.addEventListener('change', function() {
 				calendar.refetchEvents();
 			});
 
 			function formatDate(date) {
 				if (!date) return 'N/A';
-				return new Date(date).toLocaleString('en-US', {
+				return new Date(date).toLocaleString('cs-CZ', {
 					day: '2-digit',
 					month: '2-digit',
 					year: 'numeric',
@@ -164,6 +163,15 @@
 					case 'InProgress': return 'bg-warning text-dark';
 					case 'Done': return 'bg-success';
 					default: return 'bg-secondary';
+				}
+			}
+
+			function formatStatus(status) {
+				switch(status) {
+					case 'New': return 'Nová';
+					case 'InProgress': return 'Probíhá';
+					case 'Done': return 'Dokonèena';
+					default: return status;
 				}
 			}
 		});

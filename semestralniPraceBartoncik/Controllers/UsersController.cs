@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using semestralniPraceBartoncik.Data;
@@ -6,6 +7,7 @@ using semestralniPraceBartoncik.Helpers;
 
 namespace semestralniPraceBartoncik.Controllers;
 
+[Authorize]
 public class UsersController(ApplicationDbContext db) : Controller
 {
     public async Task<IActionResult> Index()

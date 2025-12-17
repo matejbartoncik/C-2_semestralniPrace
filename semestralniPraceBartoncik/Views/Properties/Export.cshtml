@@ -1,38 +1,38 @@
 @{
- ViewData["Title"] = "Export Properties";
+	ViewData["Title"] = "Exportovat nemovitosti";
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-     <h1 class="mb-4">Export Properties</h1>
+	<div class="col-md-6">
+		<h1 class="mb-4">Exportovat nemovitosti</h1>
 
-     <div class="card">
-   <div class="card-body text-center">
-    <p class="lead">Export všech nemovitostí do CSV souboru</p>
-        
-     <div class="my-4">
-<h3 class="mt-3">CSV Format</h3>
-     <p class="text-muted">Kompatibilní s Excel, Google Sheets, LibreOffice</p>
-<p class="text-muted"><small>Oddìlovaè: støedník (;)</small></p>
-  </div>
+		<div class="card">
+			<div class="card-body text-center">
+				<p class="lead">Exportujte všechny nemovitosti do CSV souboru</p>
 
-    <a href="/Properties/Export" class="btn btn-primary btn-lg">
- Stáhnout CSV
-    </a>
+				<div class="my-4">
+					<h3 class="mt-3">CSV formát</h3>
+					<p class="text-muted">Kompatibilní s Excel, Google Sheets, LibreOffice</p>
+					<p class="text-muted"><small>Oddìlovaè: støedník (;)</small></p>
+				</div>
 
-    <div class="alert alert-info mt-4 text-start">
-    <strong>?? Co obsahuje export:</strong>
-    <ul class="mb-0">
-       <li>Všechny nemovitosti</li>
-     <li>Informace o majitelích</li>
-       <li>Adresy a názvy</li>
-  </ul>
-       </div>
-  </div>
-    </div>
+				<a asp-controller="Properties" asp-action="Export" class="btn btn-primary btn-lg">
+					Stáhnout CSV
+				</a>
 
-  <div class="mt-3">
-     <a href="/Properties" class="btn btn-secondary">? Zpìt na nemovitosti</a>
-   </div>
-    </div>
+				<div class="alert alert-info mt-4 text-start">
+					<strong>Co obsahuje export:</strong>
+					<ul class="mb-0">
+						<li>Všechny nemovitosti</li>
+						<li>Informace o majitelích</li>
+						<li>Adresy a názvy</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="mt-3">
+			<a asp-controller="Properties" asp-action="Index" class="btn btn-secondary">Zpìt na nemovitosti</a>
+		</div>
+	</div>
 </div>

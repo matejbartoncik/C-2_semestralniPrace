@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using semestralniPraceBartoncik.Data;
@@ -5,6 +6,7 @@ using semestralniPraceBartoncik.Models;
 
 namespace semestralniPraceBartoncik.Controllers;
 
+[Authorize]
 public class CalendarController(ApplicationDbContext db) : Controller
 {
     public async Task<IActionResult> Index(string? technicianId)
@@ -71,11 +73,10 @@ public class CalendarController(ApplicationDbContext db) : Controller
     
     private string GetTechnicianColor(string? technicianId)
     {
-    if (string.IsNullOrEmpty(technicianId)) return "#6c757d"; // gray for unassigned
+    if (string.IsNullOrEmpty(technicianId)) return "#6c757d"; 
         
-        // Generování konzistentní barvy podle technika
         var hash = technicianId.GetHashCode();
-        var colors = new[] { "#3788d8", "#28a745", "#ffc107", "#dc3545", "#17a2b8", "#6610f2", "#e83e8c", "#fd7e14" };
+        var colors = new[] { "#3788d8", "#28a745", "#ffc107", "#dc3545", "#17a2b8", "#6610f2", "#e83e8c", "#fd7e14", "#fd7d14", "#fd2e14", "#dd7e14" };
       return colors[Math.Abs(hash) % colors.Length];
     }
 }

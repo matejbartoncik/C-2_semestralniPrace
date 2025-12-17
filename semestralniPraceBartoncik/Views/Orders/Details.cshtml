@@ -1,137 +1,155 @@
 @model Order
 @{
-    ViewData["Title"] = "Order Details";
+	ViewData["Title"] = "Detail zakázky";
 }
 
 <div class="mb-4">
-    <h1>Order Details</h1>
+	<h1>Detail zakázky</h1>
 </div>
 
 <div class="row">
-<div class="col-md-8">
-  <div class="card mb-3">
-            <div class="card-header bg-primary text-white">
-       <h5 class="mb-0">Order Information</h5>
-            </div>
-       <div class="card-body">
-     <dl class="row">
-              <dt class="col-sm-4">Order ID</dt>
-     <dd class="col-sm-8"><code>@Model.Id</code></dd>
+	<div class="col-md-8">
+		<div class="card mb-3">
+			<div class="card-header bg-primary text-white">
+				<h5 class="mb-0">Informace o zakázce</h5>
+			</div>
+			<div class="card-body">
+				<dl class="row">
+					<dt class="col-sm-4">ID zakázky</dt>
+					<dd class="col-sm-8"><code>@Model.Id</code></dd>
 
-     <dt class="col-sm-4">Created</dt>
-      <dd class="col-sm-8">@Model.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
+					<dt class="col-sm-4">Vytvoøeno</dt>
+					<dd class="col-sm-8">@Model.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
 
-     <dt class="col-sm-4">Status</dt>
- <dd class="col-sm-8">
-         @if (Model.Status == OrderStatus.New)
-       {
-   <span class="badge bg-info">@Model.Status</span>
-         }
-  else if (Model.Status == OrderStatus.InProgress)
-        {
-   <span class="badge bg-warning text-dark">@Model.Status</span>
-      }
-         else
-          {
-     <span class="badge bg-success">@Model.Status</span>
-}
-   </dd>
+					<dt class="col-sm-4">Status</dt>
+					<dd class="col-sm-8">
+						@if (Model.Status == OrderStatus.New)
+						{
+							<span class="badge bg-info">Nová</span>
+						}
+						else if (Model.Status == OrderStatus.InProgress)
+						{
+							<span class="badge bg-warning text-dark">Probíhá</span>
+						}
+						else
+						{
+							<span class="badge bg-success">Dokonèena</span>
+						}
+					</dd>
 
-      <dt class="col-sm-4">Description</dt>
-<dd class="col-sm-8">@Model.Description</dd>
-     </dl>
-            </div>
-  </div>
+					<dt class="col-sm-4">Popis</dt>
+					<dd class="col-sm-8">@Model.Description</dd>
+				</dl>
+			</div>
+		</div>
 
-    <div class="card mb-3">
-        <div class="card-header bg-secondary text-white">
-         <h5 class="mb-0">Property Information</h5>
-   </div>
-        <div class="card-body">
- @if (Model.Property != null)
-      {
-   <dl class="row">
-              <dt class="col-sm-4">Property Title</dt>
-           <dd class="col-sm-8"><strong>@Model.Property.Title</strong></dd>
+		<div class="card mb-3">
+			<div class="card-header bg-secondary text-white">
+				<h5 class="mb-0">Informace o nemovitosti</h5>
+			</div>
+			<div class="card-body">
+				@if (Model.Property != null)
+				{
+					<dl class="row">
+						<dt class="col-sm-4">Název nemovitosti</dt>
+						<dd class="col-sm-8"><strong>@Model.Property.Title</strong></dd>
 
-  <dt class="col-sm-4">Address</dt>
-   <dd class="col-sm-8">@Model.Property.Address</dd>
+						<dt class="col-sm-4">Adresa</dt>
+						<dd class="col-sm-8">@Model.Property.Address</dd>
 
-      <dt class="col-sm-4">Owner</dt>
-         <dd class="col-sm-8">
-       @if (Model.Property.Owner != null)
-       {
-        <div>
-       <strong>@Model.Property.Owner.Name</strong><br />
-     <small class="text-muted">@Model.Property.Owner.Email</small>
-       </div>
-       }
- else
-     {
-    <span class="text-muted">No owner assigned</span>
-         }
-</dd>
-         </dl>
-         }
-       else
-   {
-      <p class="text-muted">No property information available.</p>
-    }
- </div>
-        </div>
+						<dt class="col-sm-4">Vlastník</dt>
+						<dd class="col-sm-8">
+							@if (Model.Property.Owner != null)
+							{
+								<div>
+									<strong>@Model.Property.Owner.Name</strong><br />
+									<small class="text-muted">@Model.Property.Owner.Email</small>
+								</div>
+							}
+							else
+							{
+								<span class="text-muted">Žádný vlastník</span>
+							}
+						</dd>
+					</dl>
+				}
+				else
+				{
+					<p class="text-muted">Žádné informace o nemovitosti.</p>
+				}
+			</div>
+		</div>
 
-        <div class="card">
- <div class="card-header bg-success text-white">
- <h5 class="mb-0">Technician & Schedule</h5>
-   </div>
-        <div class="card-body">
-    <dl class="row">
-         <dt class="col-sm-4">Assigned Technician</dt>
-      <dd class="col-sm-8">
-          @if (Model.AssignedTechnician != null)
-       {
-     <div>
-     <strong>@Model.AssignedTechnician.Name</strong><br />
-        <small class="text-muted">@Model.AssignedTechnician.Email</small>
-   </div>
-          }
-        else
-{
-   <span class="text-muted">Unassigned</span>
-          }
-           </dd>
+		<div class="card">
+			<div class="card-header bg-success text-white">
+				<h5 class="mb-0">Technik a plánování</h5>
+			</div>
+			<div class="card-body">
+				<dl class="row">
+					<dt class="col-sm-4">Pøiøazený technik</dt>
+					<dd class="col-sm-8">
+						@if (Model.AssignedTechnician != null)
+						{
+							<div>
+								<strong>@Model.AssignedTechnician.Name</strong><br />
+								<small class="text-muted">@Model.AssignedTechnician.Email</small>
+							</div>
+						}
+						else
+						{
+							<span class="text-muted">Nepøiøazeno</span>
+						}
+					</dd>
 
-          <dt class="col-sm-4">Scheduled From</dt>
-       <dd class="col-sm-8">
-    @if (Model.ScheduledFromUtc.HasValue)
-           {
-       @Model.ScheduledFromUtc.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
-       }
-    else
-         {
-   <span class="text-muted">Not scheduled</span>
-             }
-       </dd>
+					<dt class="col-sm-4">Plánováno od</dt>
+					<dd class="col-sm-8">
+						@if (Model.ScheduledFromUtc.HasValue)
+						{
+							@Model.ScheduledFromUtc.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+						}
+						else
+						{
+							<span class="text-muted">Neplánováno</span>
+						}
+					</dd>
 
-          <dt class="col-sm-4">Scheduled To</dt>
-       <dd class="col-sm-8">
-  @if (Model.ScheduledToUtc.HasValue)
-     {
-      @Model.ScheduledToUtc.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
-     }
-     else
-        {
-        <span class="text-muted">Not scheduled</span>
-         }
-        </dd>
-    </dl>
-</div>
-  </div>
-    </div>
+					<dt class="col-sm-4">Plánováno do</dt>
+					<dd class="col-sm-8">
+						@if (Model.ScheduledToUtc.HasValue)
+						{
+							@Model.ScheduledToUtc.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+						}
+						else
+						{
+							<span class="text-muted">Neplánováno</span>
+						}
+					</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="mt-4">
-    <a class="btn btn-secondary" href="/Orders/Edit/@Model.Id">Edit Order</a>
-    <a class="btn btn-outline-danger" href="/Orders/Delete/@Model.Id">Delete Order</a>
-    <a class="btn btn-outline-secondary" href="/Orders">Back to List</a>
+	<a class="btn btn-secondary" href="/Orders/Edit/@Model.Id">Upravit zakázku</a>
+	@if (Model.ScheduledFromUtc.HasValue && Model.ScheduledToUtc.HasValue)
+	{
+		<form method="post" action="/Orders/SyncCalendar/@Model.Id" style="display:inline;">
+			<button type="submit" class="btn btn-info" title="Synchronizovat s Google Calendar">
+				Sync s Google Calendar
+			</button>
+		</form>
+	}
+	else
+	{
+		<button type="button" class="btn btn-info disabled" title="Nejdøív nastavte plánování">
+			Sync s Google Calendar
+		</button>
+	}
+	<a class="btn btn-outline-danger" href="/Orders/Delete/@Model.Id">Smazat zakázku</a>
+	<a class="btn btn-outline-secondary" href="/Orders">Zpìt na seznam</a>
 </div>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

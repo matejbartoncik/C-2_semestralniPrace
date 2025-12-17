@@ -1,109 +1,110 @@
 ﻿@model Property
 @{
-    ViewData["Title"] = "Create Property";
-    var owners = ViewBag.Owners as IEnumerable<User> ?? Enumerable.Empty<User>();
-    var googleMapsApiKey = ViewBag.GoogleMapsApiKey as string ?? "";
+	ViewData["Title"] = "Vytvořit nemovitost";
+	var owners = ViewBag.Owners as IEnumerable<User> ?? Enumerable.Empty<User>();
+	var googleMapsApiKey = ViewBag.GoogleMapsApiKey as string ?? "";
 }
 
-<h1>Create Property</h1>
+<h1>Vytvořit nemovitost</h1>
 
 <div class="row">
-    <div class="col-md-6">
-        <form method="post">
-            <div class="mb-3">
-                <label class="form-label" asp-for="Title">Title</label>
-                <input class="form-control" asp-for="Title" required />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-   
-            <div class="mb-3">
-                <label class="form-label" asp-for="Address">Address</label>
-                <input id="address-input" class="form-control" asp-for="Address" required autocomplete="off" placeholder="Start writing adress..." />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-  
-            <div class="mb-3">
-                <label class="form-label" asp-for="OwnerId">Owner</label>
-                <select class="form-select" asp-for="OwnerId" required>
-                    <option value="">-- Select Owner --</option>
-                    @foreach (var owner in owners)
-                    {
-                        <option value="@owner.Id">@owner.Name (@owner.Email)</option>
-                    }
-                </select>
-                <span asp-validation-for="OwnerId" class="text-danger"></span>
-            </div>
-    
-            <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <a class="btn btn-secondary" href="/Properties">Cancel</a>
-            </div>
-        </form>
-    </div>
+	<div class="col-md-6">
+		<form method="post">
+			<div class="mb-3">
+				<label class="form-label" asp-for="Title">Název</label>
+				<input class="form-control" asp-for="Title" required />
+				<span asp-validation-for="Title" class="text-danger"></span>
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label" asp-for="Address">Adresa</label>
+				<input id="address-input" class="form-control" asp-for="Address" required autocomplete="off" placeholder="Začněte psát adresu..." />
+				<span asp-validation-for="Address" class="text-danger"></span>
+				<small class="form-text text-muted">💡 Začněte psát a vyberte adresu z našeptávače</small>
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label" asp-for="OwnerId">Vlastník</label>
+				<select class="form-select" asp-for="OwnerId" required>
+					<option value="">-- Vyberte vlastníka --</option>
+					@foreach (var owner in owners)
+					{
+						<option value="@owner.Id">@owner.Name (@owner.Email)</option>
+					}
+				</select>
+				<span asp-validation-for="OwnerId" class="text-danger"></span>
+			</div>
+
+			<div class="mt-4">
+				<button type="submit" class="btn btn-primary">Vytvořit</button>
+				<a class="btn btn-secondary" href="/Properties">Zrušit</a>
+			</div>
+		</form>
+	</div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    
-    @if (!string.IsNullOrEmpty(googleMapsApiKey))
-    {
-        <!-- Google Maps API Loader -->
-        <script>
-            (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.googleapis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-                v: "weekly",
-                key: "@googleMapsApiKey",
-                language: "cs",
-                region: "CZ"
-            });
-        </script>
+	<partial name="_ValidationScriptsPartial" />
 
-        <script>
-            let autocomplete;
+	@if (!string.IsNullOrEmpty(googleMapsApiKey))
+	{
+		<!-- Google Maps API Loader -->
+		<script>
+			(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.googleapis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+				   v: "weekly",
+			   key: "@googleMapsApiKey",
+					 language: "cs",
+			   region: "CZ"
+			});
+		</script>
 
-            async function initAutocomplete() {
-                try {
-                    const { Place, Autocomplete } = await google.maps.importLibrary("places");
-                    
-                    const input = document.getElementById("address-input");
-                    
-                    const options = {
-                        fields: ["formatted_address", "address_components", "geometry", "name"],
-                        types: ["address"],
-                        componentRestrictions: { country: "cz" }, 
-                        strictBounds: false
-                    };
+		<script>
+			 let autocomplete;
 
-                    autocomplete = new google.maps.places.Autocomplete(input, options);
-                    
-                    autocomplete.addListener("place_changed", () => {
-                        const place = autocomplete.getPlace();
-                        
-                        if (!place.geometry || !place.geometry.location) {
-                            return;
-                        }
-                        
-                        if (place.formatted_address) {
-                            input.value = place.formatted_address;
-                        }
-                        
-                    });
-                    
-                    
-                } catch (error) {
-                }
-            }
+				  async function initAutocomplete() {
+						try {
+			const { Place, Autocomplete } = await google.maps.importLibrary("places");
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initAutocomplete);
-            } else {
-                initAutocomplete();
-            }
-        </script>
-    }
-    else
-    {
-        <script>
-            console.warn(" Google Maps API klíč není nastaven. Autocomplete nebude funkční.");
-        </script>
-    }
+					const input = document.getElementById("address-input");
+
+			  const options = {
+				  fields: ["formatted_address", "address_components", "geometry", "name"],
+				  types: ["address"],
+						  componentRestrictions: { country: "cz" },
+						   strictBounds: false
+					 };
+
+					 autocomplete = new google.maps.places.Autocomplete(input, options);
+
+				autocomplete.addListener("place_changed", () => {
+				  const place = autocomplete.getPlace();
+
+				   if (!place.geometry || !place.geometry.location) {
+					return;
+			   }
+
+					if (place.formatted_address) {
+			 input.value = place.formatted_address;
+					   }
+
+			 });
+
+
+					  } catch (error) {
+					}
+			  }
+
+					   if (document.readyState === 'loading') {
+				   document.addEventListener('DOMContentLoaded', initAutocomplete);
+			   } else {
+				 initAutocomplete();
+				 }
+		</script>
+	}
+	else
+	{
+		<script>
+			console.warn("⚠️ Google Maps API klíč není nastaven. Autocomplete nebude funkční.");
+		</script>
+	}
 }

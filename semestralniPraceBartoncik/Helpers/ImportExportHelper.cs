@@ -5,185 +5,177 @@ namespace semestralniPraceBartoncik.Helpers;
 
 public static class ImportExportHelper
 {
-    // ===== CSV EXPORT (s støedníkem) =====
- 
-  public static byte[] ExportOrdersToCsv(IEnumerable<Order> orders)
-  {
-  var csv = new StringBuilder();
-      csv.AppendLine("ID;Created;PropertyTitle;PropertyAddress;Description;Status;TechnicianName;TechnicianEmail;ScheduledFrom;ScheduledTo");
+    public static byte[] ExportOrdersToCsv(IEnumerable<Order> orders)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("ID;Created;PropertyTitle;PropertyAddress;Description;Status;TechnicianName;TechnicianEmail;ScheduledFrom;ScheduledTo");
 
-        foreach (var order in orders)
-   {
-            csv.AppendLine($"\"{order.Id}\";" +
-      $"\"{order.CreatedAtUtc:yyyy-MM-dd HH:mm}\";" +
-   $"\"{order.Property?.Title ?? ""}\";" +
-     $"\"{order.Property?.Address ?? ""}\";" +
-    $"\"{order.Description}\";" +
-         $"\"{order.Status}\";" +
-     $"\"{order.AssignedTechnician?.Name ?? ""}\";" +
- $"\"{order.AssignedTechnician?.Email ?? ""}\";" +
-$"\"{order.ScheduledFromUtc?.ToString("yyyy-MM-dd HH:mm") ?? ""}\";" +
-         $"\"{order.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm") ?? ""}\"");
+        foreach (var o in orders)
+        {
+            sb.AppendLine(BuildCsvLine(
+    o.Id,
+       o.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm"),
+                o.Property?.Title,
+           o.Property?.Address,
+         o.Description,
+           o.Status.ToString(),
+                o.AssignedTechnician?.Name,
+       o.AssignedTechnician?.Email,
+        o.ScheduledFromUtc?.ToString("yyyy-MM-dd HH:mm"),
+o.ScheduledToUtc?.ToString("yyyy-MM-dd HH:mm")
+            ));
         }
 
-   return Encoding.UTF8.GetBytes(csv.ToString());
-}
+        return GetBytes(sb.ToString());
+    }
 
     public static byte[] ExportPropertiesToCsv(IEnumerable<Property> properties)
-  {
-        var csv = new StringBuilder();
-        csv.AppendLine("ID;Title;Address;OwnerName;OwnerEmail");
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("ID;Title;Address;OwnerName;OwnerEmail");
 
- foreach (var prop in properties)
-     {
-            csv.AppendLine($"\"{prop.Id}\";" +
-     $"\"{prop.Title}\";" +
-  $"\"{prop.Address}\";" +
-    $"\"{prop.Owner?.Name ?? ""}\";" +
-    $"\"{prop.Owner?.Email ?? ""}\"");
+        foreach (var p in properties)
+        {
+            sb.AppendLine(BuildCsvLine(p.Id, p.Title, p.Address, p.Owner?.Name, p.Owner?.Email));
         }
 
-        return Encoding.UTF8.GetBytes(csv.ToString());
+        return GetBytes(sb.ToString());
     }
 
     public static byte[] ExportUsersToCsv(IEnumerable<User> users)
     {
-        var csv = new StringBuilder();
-     csv.AppendLine("ID;Name;Email;Role");
+        var sb = new StringBuilder();
+        sb.AppendLine("ID;Name;Email;Role");
 
-  foreach (var user in users)
-   {
-    csv.AppendLine($"\"{user.Id}\";" +
-       $"\"{user.Name}\";" +
-    $"\"{user.Email}\";" +
-        $"\"{user.Role}\"");
-    }
-
-        return Encoding.UTF8.GetBytes(csv.ToString());
- }
-
-    // ===== CSV IMPORT (s støedníkem) =====
-    
-    public static List<Order> ImportOrdersFromCsv(string csvContent, Dictionary<string, string> propertyLookup, Dictionary<string, string> technicianLookup)
-    {
-  var orders = new List<Order>();
-        var lines = csvContent.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        
-        // Skip header
-  for (int i = 1; i < lines.Length; i++)
-     {
-      var parts = ParseCsvLine(lines[i], ';');
-   if (parts.Length < 6) continue;
-
-    var order = new Order
-     {
-      Id = Guid.NewGuid().ToString(),
-          PropertyId = propertyLookup.ContainsKey(parts[2]) ? propertyLookup[parts[2]] : "",
-        Description = parts[4],
- Status = Enum.TryParse<OrderStatus>(parts[5], out var status) ? status : OrderStatus.New,
-   CreatedAtUtc = DateTime.TryParse(parts[1], out var created) ? created : DateTime.UtcNow
-  };
-
-     if (parts.Length > 6 && !string.IsNullOrWhiteSpace(parts[6]) && technicianLookup.ContainsKey(parts[6]))
-   {
-order.AssignedTechnicianId = technicianLookup[parts[6]];
- }
-
-            if (parts.Length > 8 && DateTime.TryParse(parts[8], out var schedFrom))
-{
-   order.ScheduledFromUtc = schedFrom;
-  }
-
-if (parts.Length > 9 && DateTime.TryParse(parts[9], out var schedTo))
-  {
-      order.ScheduledToUtc = schedTo;
-    }
-
-     orders.Add(order);
+        foreach (var u in users)
+        {
+            sb.AppendLine(BuildCsvLine(u.Id, u.Name, u.Email, u.Role.ToString()));
         }
 
-        return orders;
+        return GetBytes(sb.ToString());
     }
 
-    public static List<Property> ImportPropertiesFromCsv(string csvContent, Dictionary<string, string> ownerLookup)
+    public static List<Order> ImportOrdersFromCsv(string content, Dictionary<string, string> propertyLookup, Dictionary<string, string> technicianLookup)
     {
-  var properties = new List<Property>();
-        var lines = csvContent.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        
-  // Skip header
-     for (int i = 1; i < lines.Length; i++)
-   {
-     var parts = ParseCsvLine(lines[i], ';');
-  if (parts.Length < 3) continue;
+        var result = new List<Order>();
+        var lines = ReadCsvLines(content);
 
-            var property = new Property
-{
-   Id = Guid.NewGuid().ToString(),
-Title = parts[1],
-   Address = parts[2],
-         OwnerId = parts.Length > 3 && ownerLookup.ContainsKey(parts[3]) ? ownerLookup[parts[3]] : ""
+        foreach (var cols in lines)
+        {
+            if (cols.Length < 6) continue;
+
+            var order = new Order
+            {
+                Id = Guid.NewGuid().ToString(),
+                PropertyId = propertyLookup.GetValueOrDefault(cols[2], ""),
+                Description = cols[4],
+                Status = Enum.TryParse<OrderStatus>(cols[5], out var s) ? s : OrderStatus.New,
+                CreatedAtUtc = TryParseDate(cols[1]) ?? DateTime.UtcNow
             };
 
-         if (string.IsNullOrWhiteSpace(property.OwnerId) && ownerLookup.Any())
-   {
-  property.OwnerId = ownerLookup.First().Value;
-            }
+            if (cols.Length > 6 && technicianLookup.TryGetValue(cols[6], out var techId))
+                order.AssignedTechnicianId = techId;
 
-         properties.Add(property);
+            if (cols.Length > 8)
+                order.ScheduledFromUtc = TryParseDate(cols[8]);
+
+            if (cols.Length > 9)
+                order.ScheduledToUtc = TryParseDate(cols[9]);
+
+            result.Add(order);
+        }
+
+        return result;
     }
 
-        return properties;
-    }
-
-    public static List<User> ImportUsersFromCsv(string csvContent)
+    public static List<Property> ImportPropertiesFromCsv(string content, Dictionary<string, string> ownerLookup)
     {
-var users = new List<User>();
-        var lines = csvContent.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        
-    // Skip header
-        for (int i = 1; i < lines.Length; i++)
- {
-     var parts = ParseCsvLine(lines[i], ';');
-            if (parts.Length < 4) continue;
+        var result = new List<Property>();
+        var lines = ReadCsvLines(content);
 
-    var user = new User
+        foreach (var cols in lines)
         {
-    Id = Guid.NewGuid().ToString(),
- Name = parts[1],
-   Email = parts[2],
-   Role = Enum.TryParse<UserRole>(parts[3], out var role) ? role : UserRole.Owner
-  };
+            if (cols.Length < 3) continue;
 
-users.Add(user);
+            var ownerId = cols.Length > 3 ? ownerLookup.GetValueOrDefault(cols[3], "") : "";
+            if (string.IsNullOrWhiteSpace(ownerId) && ownerLookup.Any())
+                ownerId = ownerLookup.First().Value;
+
+            result.Add(new Property
+            {
+                Id = Guid.NewGuid().ToString(),
+                Title = cols[1],
+                Address = cols[2],
+                OwnerId = ownerId
+            });
         }
 
-        return users;
+        return result;
     }
 
-    private static string[] ParseCsvLine(string line, char delimiter)
+    public static List<User> ImportUsersFromCsv(string content)
     {
-        var result = new List<string>();
-var current = new StringBuilder();
-    bool inQuotes = false;
+        var result = new List<User>();
+        var lines = ReadCsvLines(content);
 
-    foreach (char c in line)
-      {
-if (c == '"')
+        foreach (var cols in lines)
+        {
+            if (cols.Length < 4) continue;
+
+            result.Add(new User
             {
-    inQuotes = !inQuotes;
-         }
-      else if (c == delimiter && !inQuotes)
-            {
-            result.Add(current.ToString());
-       current.Clear();
-          }
-         else
-       {
-         current.Append(c);
+                Id = Guid.NewGuid().ToString(),
+                Name = cols[1],
+                Email = cols[2],
+                Role = Enum.TryParse<UserRole>(cols[3], out var r) ? r : UserRole.Owner
+            });
         }
+
+        return result;
     }
 
-        result.Add(current.ToString());
-        return result.ToArray();
+    private static string BuildCsvLine(params string?[] values)
+    {
+        return string.Join(';', values.Select(v => $"\"{v ?? ""}\""));
+    }
+
+    private static byte[] GetBytes(string text)
+    {
+        return new UTF8Encoding(true).GetBytes(text);
+    }
+
+    private static IEnumerable<string[]> ReadCsvLines(string content)
+    {
+        return content.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                .Skip(1)
+            .Select(line => SplitCsvLine(line));
+    }
+
+    private static DateTime? TryParseDate(string value)
+    {
+        return DateTime.TryParse(value, out var d) ? d : null;
+    }
+
+    private static string[] SplitCsvLine(string line)
+    {
+        var items = new List<string>();
+        var current = new StringBuilder();
+        bool inQuotes = false;
+
+        foreach (char ch in line)
+        {
+            if (ch == '"')
+                inQuotes = !inQuotes;
+            else if (ch == ';' && !inQuotes)
+            {
+                items.Add(current.ToString());
+                current.Clear();
+            }
+            else
+                current.Append(ch);
+        }
+
+        items.Add(current.ToString());
+        return items.ToArray();
     }
 }

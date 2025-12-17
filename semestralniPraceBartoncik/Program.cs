@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using semestralniPraceBartoncik.Data;
+using semestralniPraceBartoncik.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// User Secrets se naèítají automaticky v Development režimu
-// Pro produkci nastavte environment variable: GoogleMaps__ApiKey
+
 
 builder.Services.AddControllersWithViews();
 
@@ -14,9 +14,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication("Cookies").AddCookie("Cookies", opt =>
 {
     opt.LoginPath = "/Auth/Login";
+    opt.AccessDeniedPath = "/Auth/Login";
 });
 
 builder.Services.AddAuthorization();
+
+
+builder.Services.AddScoped<GoogleCalendarService>();
 
 var app = builder.Build();
 
@@ -43,6 +47,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Login}/{id?}");
 
 app.Run();

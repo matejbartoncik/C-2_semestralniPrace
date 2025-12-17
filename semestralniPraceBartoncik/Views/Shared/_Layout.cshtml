@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/semestralniPraceBartoncik.styles.css" asp-append-version="true" />
     <style>
-        /* Navbar styling */
+     /* Navbar styling */
   .navbar {
           padding: 1rem 1rem;
             min-height: 70px;
@@ -16,56 +16,86 @@
    
         .navbar-brand {
 font-size: 1.5rem;
-            font-weight: 600;
-       padding: 0.5rem 0;
-      }
-        
-        .navbar-nav .nav-link {
-            font-size: 1.1rem;
-            padding: 0.5rem 1rem;
+       font-weight: 600;
+     padding: 0.5rem 0;
+   }
+     
+     .navbar-nav .nav-link {
+  font-size: 1.1rem;
+         padding: 0.5rem 1rem;
  }
         
       .navbar .btn {
-            font-size: 1rem;
+          font-size: 1rem;
             padding: 0.5rem 1.5rem;
-        }
+      }
     </style>
 </head>
 <body>
     <header>
       <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark box-shadow mb-3">
           <div class="container-fluid">
- <a class="navbar-brand" asp-area="" asp-controller="Dashboard" asp-action="Index">📊 Admin Panel</a>
+ <a class="navbar-brand" asp-area="" asp-controller="Dashboard" asp-action="Index">Admin Panel</a>
  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
          aria-expanded="false" aria-label="Toggle navigation">
      <span class="navbar-toggler-icon"></span>
-             </button>
-          <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+     </button>
+  <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
    <ul class="navbar-nav flex-grow-1">
-         <li class="nav-item">
-         <a class="nav-link" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-            </li>
    <li class="nav-item">
-      <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">Orders</a>
+       <a class="nav-link" asp-area="" asp-controller="Dashboard" asp-action="Index">Přehled</a>
+        </li>
+   <li class="nav-item">
+  <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">Zakázky</a>
  </li>
     <li class="nav-item">
-     <a class="nav-link" asp-area="" asp-controller="Calendar" asp-action="Index">Calendar</a>
+     <a class="nav-link" asp-area="" asp-controller="Calendar" asp-action="Index">Kalendář</a>
         </li>
     <li class="nav-item">
-       <a class="nav-link" asp-area="" asp-controller="Properties" asp-action="Index">Properties</a>
-   </li>
+       <a class="nav-link" asp-area="" asp-controller="Properties" asp-action="Index">Nemovitosti</a>
+</li>
    <li class="nav-item">
-      <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+      <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index">Uživatelé</a>
        </li>
    </ul>
  <div class="d-flex">
-  <a class="btn btn-outline-light btn-sm" asp-area="" asp-controller="Auth" asp-action="Logout">Logout</a>
-      </div>
+  <a class="btn btn-outline-light btn-sm" asp-area="" asp-controller="Auth" asp-action="Logout">Odhlásit se</a>
+  </div>
+     </div>
        </div>
-       </div>
-        </nav>
+      </nav>
     </header>
   <div class="container">
+     <!-- TempData zprávy -->
+        @if (TempData["Success"] != null)
+     {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+ <strong>Úspěch!</strong> @TempData["Success"]
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+   }
+        @if (TempData["Error"] != null)
+    {
+            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+       <strong>Chyba!</strong> @TempData["Error"]
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+   </div>
+        }
+     @if (TempData["Warning"] != null)
+     {
+   <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
+           <strong>Upozornění!</strong> @TempData["Warning"]
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["Info"] != null)
+        {
+  <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+   <strong>Info:</strong> @TempData["Info"]
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
      <main role="main" class="pb-3">
     @RenderBody()
     </main>
@@ -73,8 +103,8 @@ font-size: 1.5rem;
 
     <footer class="border-top footer text-muted mt-5">
         <div class="container text-center">
-            &copy; 2025 - Spolehlivý Opravář - Admin Panel (MVP)
-        </div>
+  &copy; 2025 - Spolehlivý Opravář - Admin Panel (MVP)
+     </div>
     </footer>
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
